@@ -214,5 +214,19 @@ select dnome, pnome, unome
 from departamento left join funcionario on dnr = dnumero
 where cpf is null;
 
+/*Recupere o nome dos funcionários que não possuem dependente*/
+select distinct pnome, unome
+from funcionario left join dependente on cpf = fcpf
+where fcpf is null;
+
+/*Recupere o nome dos funcionários e o nome dos departamentos que eles estão alocados. 
+Recupere também o nome dos funcionpario que não estão associados a algum departamento 
+e o nome dos departamentos que não estão associados a algum funcionário */
+select pnome, unome, dnome
+from funcionario left join departamento on dnr = dnumero
+union 
+select pnome, unome, dnome
+from funcionario right join departamento on dnr = dnumero;
+
 
 
