@@ -237,3 +237,24 @@ from empregado
 where empregado.sexo = 'f'
 order by empregado.data_nasc desc;
 
+-- Recupere o nome dos empregados não que tem dependente. Use NOT IN.
+select nome
+from empregado
+where codigo_empregado not in
+(select distinct codigo_empregado from dependente);
+
+-- Recupere o nome dos empregados não que tem dependente. Use junção externa.
+select nome, d.*
+from empregado e left join dependente d on e.codigo_empregado = d.codigo_empregado;
+
+-- Recupere todas as informações do(s) empregado(s) que não trabalham no Rio de Janeiro. Use NOT IN.
+select *
+from empregado
+where uf not in ('RJ');
+
+-- Recupere o nome dos cargos que estão ocupados por algum empregado. Use IN.
+select nome_cargo
+from cargo
+where codigo_cargo in (select codigo_cargo from empregado);
+
+-- Se apropriar do banco de dados, criar um enunciado e uma consulta de acordo com o que se pede
