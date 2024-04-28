@@ -206,11 +206,11 @@ UNLOCK TABLES;
 select distinct aluno.nome, aluno.sobrenome 
 from aluno inner join matricula on aluno.numMatricula = matricula.aluno_matricula
 		   inner join turma on matricula.turma_idturma = turma.idturma
-           inner join atividade on  = atividade.idatividade = turma.idturma
+           inner join atividade on turma.atividade_idatividade = atividade.idatividade
 where turma.atividade_idatividade = 1;
            
 -- POSSIBILIDADE 2) Recupere o nome dos alunos, o nome das atividades que eles praticam e o nome do seu instrutor
-select aluno.nome, atividade.nome, instrutor.nome
+select distinct aluno.nome, atividade.nome, instrutor.nome
 from aluno inner join matricula on aluno.numMatricula = matricula.aluno_matricula
 		   inner join turma on matricula.turma_idturma = turma.idturma
            inner join atividade on turma.atividade_idatividade = idatividade
@@ -232,7 +232,7 @@ order by instrutor.nome asc;
 
 -- POSSIBILIDADE 2) Recupere o nome de todas as atividades, caso elas estejam associadas a alguma turma, traga também o código da turma
 select distinct atividade.nome, turma.idturma
-from atividade left join turma on atividade.idatividade = turma.idturma
+from atividade left join turma on atividade.idatividade = turma.atividade_idatividade
 where idTurma is not null
 order by atividade.nome asc;
 
@@ -244,10 +244,18 @@ order by aluno.nome asc;
 
 -- QUESTÃO 3: Crie e resolva uma consulta SQL com consultas aninhadas
 -- POSSIBILIDADE 1) Recupere o nome dos alunos que não praticam nenhuma atividade
-
+select aluno.nome
+from aluno
+where aluno.numMatricula not in(select distinct matricula.aluno_matricula
+						  from matricula
+                          where aluno_matricula is not null);
 
 -- POSSIBILIDADE 2) Recupere o nome dos instrutores que não estão vinculados a nenhuma turma
-
+select instrutor.nome
+from instrutor
+where instrutor.idInstrutor not in(select distinct idTurma from turma);
 
 -- POSSIBILIDADE 3) Recupere o nome das atividade que não possuem alunos.
-
+select atividade.nome
+from atividade
+where atividade.idatividade not in(select distinct atividade_idatividade from turma);
