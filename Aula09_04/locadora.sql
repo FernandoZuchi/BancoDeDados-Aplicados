@@ -240,7 +240,27 @@ insert into locacao values(1,1111,300,5.00,'2016-05-01'),(2,1111,310,5.50,'2016-
 (44,1515,321,8.00,'2016-06-12'),(45,1414,321,8.00,'2016-06-05'),(46,2222,317,7.50,'2016-05-15'),(47,1818,317,7.50,'2016-05-31'),
 (48,1919,318,6.50,'2016-06-01'),(49,1212,318,6.50,'2016-05-14'),(50,1111,321,7.50,'2016-06-09');
 
-/*Traga o nome dos funcionários, CASO(indica junção externa) eles estejam associados a algum departamento, traga também o nome*/
-select pnome, unome,
-from funcionario
+-- Liste o nome dos clientes e a qtde de filmes queeles locaram, ordenado da maior para menor quantidade
+select nome_cliente, count(*) as qtde_filmes
+from cliente c inner join locacao l on c.codigo_cliente = l.codigo_cliente
+group by c.codigo_cliente
+order by qtde_filmes desc;
+
+-- Liste o título do filme, o nome dos clientes que locaram o mesmo filme por mais de uma vez (OBS: Você deverá agrupar por mais de uma coluna)
+select nome_cliente, titulo
+from cliente c inner join locacao l 
+on c.codigo_cliente = l.codigo_cliente inner join filme f
+on f.codigo_filme = l.codigo_filme
+group by c.codigo_cliente, f.codigo_filme
+having count(*)>1; 
+
+-- Liste os dados dos clientes que locaram mais de um filme no mesmo dia (OBS: Você deverá agrupar por mais de uma coluna)
+select nome_cliente
+from cliente c inner join locacao l
+on c.codigo_cliente = l.codigo_cliente inner join filme f
+on f.codigo_filme = l.codigo_filme
+group by c.codigo_cliente, data_locacao
+having count(*)>1;
+
+-- Liste os dados dos atores que fizeram 2 ou mais filmes
 
