@@ -201,32 +201,42 @@ UNLOCK TABLES;
 
 -- Dump completed on 2020-09-17 13:02:14
 
-/*Traga o nome de todos funcionário, caso eles estejam associados a algum departamento, traga também o nome de seus departamentos*/
-select pnome, unome, dnome
-from funcionario left join departamento on dnr = dnumero;
+/* Crie e exiba uma visão que recupere o nome e o sobrenome dos funcionários e a quantidade total de horas que eles trabalham. 
+Traga apenas os funcionários que trabalham mais de 35 horas*/
+create view total_horas as 
+select pnome, unome, sum(horas)
+from funcionario inner join trabalha_em on cpf = fcpf
+group by cpf
+having sum(horas) > 35;
 
-/*Traga o nome de todos departamentos, caso eles tenham algum funcionário associado, traga também o nome do funcionário */
-select dnome, pnome, unome
-from departamento left join funcionario on dnr = dnumero;
+select * from total_horas;
 
-/*Traga o nome do departamento que não possui funcionário associado */
-select dnome, pnome, unome
-from departamento left join funcionario on dnr = dnumero
-where cpf is null;
+/* Crie e exiba uma visão que recupere o nome e o sobrenome dos funcionários e o nome dos projetos que eles trabalham */
+create view funcs as
+select f.pnome, f.unome, p.projnome
+from funcionario f
+inner join trabalha_em on trabalha_em.fcpf = f.cpf
+inner join projeto p on trabalha_em.pnr = p.projnumero
+order by pnome asc;
 
-/*Recupere o nome dos funcionários que não possuem dependente*/
-select distinct pnome, unome
+/* Crie e exiba uma visão que recupere o nome de todos os funcionários juntamente com a quantidade de dependentes que eles possuem.
+Caso ele não tenha nenhum dependente, exiba 0 na contagem */
+create view num_dependentes as 
+select pnome, unome, count(fcpf) as num_dependentes
 from funcionario left join dependente on cpf = fcpf
-where fcpf is null;
+group by cpf;
 
-/*Recupere o nome dos funcionários e o nome dos departamentos que eles estão alocados. 
-Recupere também o nome dos funcionpario que não estão associados a algum departamento 
-e o nome dos departamentos que não estão associados a algum funcionário */
-select pnome, unome, dnome
-from funcionario left join departamento on dnr = dnumero
-union 
-select pnome, unome, dnome
-from funcionario right join departamento on dnr = dnumero;
+/* Traga os funcionários que possuem o maior número de dependentes */
+select max(num_dependentes)
+from num_dependentes;
+
+/* Traga o nome dos funcs com o maior número de dependentes */
+select pnome, unome, count(fcpf) as num_dependentes
+from funcionario left join dependente on cpf = fcpf
+group by cpf
+having num_dependentes = (select max(num_dependentes) from num_dependentes);
+
+
 
 
 
