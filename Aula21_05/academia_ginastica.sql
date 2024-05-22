@@ -201,53 +201,25 @@ UNLOCK TABLES;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2017-06-04 23:18:38
--- QUESTÃO 1: Crie e resolva uma consulta SQL envolvendo junção interna com pelo menos 4 tabelas.
--- POSSIBILIDADE 1) Recupere o nome, sobrenome dos alunos que praticam Yoga
-select distinct aluno.nome, aluno.sobrenome 
-from aluno inner join matricula on aluno.numMatricula = matricula.aluno_matricula
-		   inner join turma on matricula.turma_idturma = turma.idturma
-           inner join atividade on  = atividade.idatividade = turma.idturma
-where turma.atividade_idatividade = 1;
-           
--- POSSIBILIDADE 2) Recupere o nome dos alunos, o nome das atividades que eles praticam e o nome do seu instrutor
-select aluno.nome, atividade.nome, instrutor.nome
-from aluno inner join matricula on aluno.numMatricula = matricula.aluno_matricula
-		   inner join turma on matricula.turma_idturma = turma.idturma
-           inner join atividade on turma.atividade_idatividade = idatividade
-           inner join instrutor on turma.idTurma = instrutor.idInstrutor;
-           
--- POSSIBILIDADE 3) Recupere o nome do aluno, sua data de matrícula e o nome do seu ionstrutor
-select aluno.nome, matricula.datamatricula, instrutor.nome
-from aluno inner join matricula on aluno.numMatricula = matricula.aluno_matricula
-		   inner join turma on matricula.turma_idturma = turma.idturma
-           inner join instrutor on turma.idTurma = instrutor.idInstrutor;
-           
--- QUESTÃO 2: Crie e resolva uma consulta em SQL que contenha junção externa e ordenação
--- POSSIBILIDADE 1) Recupere o nome de todos os intrutores, caso eless deem aula para alguma turma, mostre também o id da turma e o horário. Ordene pelo horário de maneira ascendente
-select distinct instrutor.nome, turma.idturma, turma.horario
-from instrutor right join turma on instrutor.idinstrutor = turma.idturma
-where idTurma is not null
-order by instrutor.nome asc;
-			   
+/* Crie e exiba uma visão que recupere os nomes e sobrenome dos instrutores e o código das turmas que eles ministram. Ordene pelo nome do instrutor(1008 linhas)*/
+create view instrutor_turma as
+select i.nome, i.sobrenome, t.idturma
+from instrutor i
+inner join turma t on i.idinstrutor = t.instrutor_idinstrutor
+order by nome asc;
 
--- POSSIBILIDADE 2) Recupere o nome de todas as atividades, caso elas estejam associadas a alguma turma, traga também o código da turma
-select distinct atividade.nome, turma.idturma
-from atividade left join turma on atividade.idatividade = turma.idturma
-where idTurma is not null
-order by atividade.nome asc;
+/* Crie e exiba uma visão que recupere os dados dos instrutores que dão aula para mais de 2 turmas (47 linhas)*/
+select i.idinstrutor, i.nome, count(t.idturma)
+from instrutor i 
+inner join turma t on i.idinstrutor = t.instrutor_idinstrutor
+group by i.idinstrutor, i.nome
+having count(t.idturma);
 
--- POSSIBILIDADE 3) Recupere o nome de todos os alunos, caso eles estejam matricuçados, traga também a data da matrícula
-select aluno.nome, matricula.aluno_matricula
-from aluno right join matricula on aluno.numMatricula = matricula.aluno_matricula
-where aluno_matricula is not null
-order by aluno.nome asc;
+/* Crie e exiba uma visão que recupere os nomes das atividades com a quantidade de turmas que a praticam. Ordene pelo nome da atividade(40 linhas) */
 
--- QUESTÃO 3: Crie e resolva uma consulta SQL com consultas aninhadas
--- POSSIBILIDADE 1) Recupere o nome dos alunos que não praticam nenhuma atividade
+/* Crie e exiba uma visão que recupere os dados dos alunos não matriculados(14247 linhas)*/	
 
+/* Crie e exiba uma visão que recupere os dados dos alunos e os códigos das turmas que eles participam. Ordene pelo nome do aluno(2656)*
 
--- POSSIBILIDADE 2) Recupere o nome dos instrutores que não estão vinculados a nenhuma turma
-
-
--- POSSIBILIDADE 3) Recupere o nome das atividade que não possuem alunos.
+/* Crie e exiba uma visão que recupere os dados dos alunos que praticam Pilates. (81 linhas)*/	   
 
