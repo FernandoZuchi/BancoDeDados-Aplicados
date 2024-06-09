@@ -244,7 +244,7 @@ order by aluno.nome asc;
 
 -- QUESTÃO 3: Crie e resolva uma consulta SQL com consultas aninhadas
 -- POSSIBILIDADE 1) Recupere o nome dos alunos que não praticam nenhuma atividade
-select aluno.nome
+select distinct aluno.nome
 from aluno
 where aluno.numMatricula not in(select distinct matricula.aluno_matricula
 						  from matricula

@@ -135,10 +135,58 @@ UNLOCK TABLES;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;carrinho
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2022-05-15 16:59:53
+/* Recupere todas as informações dos clientes que não efetuaram nenhuma compra. Utilize junção externa ou not in.(8 linhas retornadas) */
+select c.*
+from cliente c left join compra co on c.ClienteId = co.ClienteId
+where CompraId is null;
+
+/* Traga todas as informações dos produtos em que o preço de venda é pelo menos 60% a mais que o preço de custo. Ordene do maior para o menor preço de venda. (4 linhas retornadas) */
+select p.*
+from produto p
+where p.PrecoVenda > p.PrecoCusto + (0.6 * PrecoCusto)
+order by p.PrecoVenda desc;
+
+/* Recupere todas as informações do(s) produto(s) com menor preço de venda (1 linha retornada). */
+select p.*
+from produto p
+where p.PrecoVenda = (select min(p.PrecoVenda) from produto p);
+
+/* Crie e exiba uma visão que recupere todas as informações dos clientes, caso eles tenham realizado alguma compra, recupere também o id da compra (16 linhas retornadas). */
+create view infoClientes as 
+select c.*, co.CompraId
+from cliente c left join compra co on c.ClienteId = co.ClienteId;
+
+select * from infoClientes;
+
+/*Recupere o id da compra, o nome do cliente e o valor total (incluindo o frete). 
+O valor total da compra deverá ser calculado multiplicando o valor de venda do produto pela quantidade comprada. 
+Em seguida, deve-se somar todos os produtos adicionados no carrinho e em seguida o valor do frete (8 linhas retornadas).*/
+select c.CompraId, cl.PrimNome, sum(p.PrecoVenda * ca.quantidade + c.frete) as valor_total
+from compra c inner join carrinho ca on c.CompraId = ca.CompraId
+			  inner join produto p on ca.ProdutoId = p.ProdutoId
+              inner join cliente cl on c.ClienteId = cl.ClienteId
+group by c.CompraId;
+
+
+/* Recupere o nome do produto e a quantidade total de vendas realizadas de cada produto. Para os produtos que venderam mais de 2 unidades (6 linhas retornadas).*/
+select p.Descricao, count(ca.quantidade) as qdade_vendas
+from compra c inner join carrinho ca on c.CompraId = ca.CompraId
+			  inner join produto p on ca.ProdutoId = p.ProdutoId
+group by ca.ProdutoId
+having qdade_vendas >= 2;
+
+
+
+
+
+
+
+
+
