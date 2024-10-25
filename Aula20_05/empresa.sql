@@ -201,6 +201,7 @@ UNLOCK TABLES;
 
 -- Dump completed on 2020-09-17 13:02:14
 
+/*
 /* Crie e exiba uma visão que recupere o nome e o sobrenome dos funcionários e a quantidade total de horas que eles trabalham. 
 Traga apenas os funcionários que trabalham mais de 35 horas*/
 create view total_horas as 
@@ -235,7 +236,7 @@ select pnome, unome, count(fcpf) as num_dependentes
 from funcionario left join dependente on cpf = fcpf
 group by cpf
 having num_dependentes = (select max(num_dependentes) from num_dependentes);
-
+ */
 
 
 
